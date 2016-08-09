@@ -40,7 +40,7 @@ namespace :reconstruction do
     reconstructed = reconstructed_from_raw raw
 
     desc "dpc_reconstruction of #{reconstructed}"
-    file reconstructed do |f|
+    file reconstructed => expanded.split(" ") do |f|
       Dir.chdir "../dpc_reconstruction" do
         sh "dpc_radiography #{expanded}"
       end

@@ -18,8 +18,9 @@ def main(filename, outputname):
     differential_phase = dataset[..., 1]
     dark_field = dataset[..., 2]
     fig, ax = plt.subplots()
-    limits = [0.7, 1]
-    image = ax.imshow(absorption, interpolation="none", aspect='auto')
+    # limits = [0.7, 1]
+    limits = stats.mstats.mquantiles(0.1, 0.9)
+    image = ax.imshow(dark_field, interpolation="none", aspect='auto')
     image.set_clim(*limits)
     xv, yv = np.meshgrid(
         np.arange(absorption.shape[0]),
