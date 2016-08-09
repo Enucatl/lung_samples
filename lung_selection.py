@@ -13,6 +13,7 @@ import csv
 @click.argument("outputname", type=click.Path(exists=False))
 def main(filename, outputname):
     dataset = h5py.File(filename)["postprocessing/dpc_reconstruction"]
+    visibility = h5py.File(filename)["postprocessing/visibility"]
     absorption = dataset[..., 0]
     differential_phase = dataset[..., 1]
     dark_field = dataset[..., 2]
@@ -40,13 +41,14 @@ def main(filename, outputname):
     input('Press any key to accept selected points')
     with open(outputname, "w") as outputfile:
         writer = csv.writer(outputfile)
-        writer.writerow(["A", "P", "B", "R"])
-        for a, p, b in zip(
+        writer.writerow(["A", "P", "B", "R", "v"])
+        for a, p, b, v in zip(
                 absorption[ind],
                 differential_phase[ind],
-                dark_field[ind]):
-            writer.writerow([a, p, b, np.log(b) / np.log(a)])
-
+                dark_field[ind],
+                visibility[ind],
+                ):
+            writer.writerow([a, p, b, np.log(b) / np.log(a), v])
 
 if __name__ == "__main__":
     main()
