@@ -59,9 +59,20 @@ namespace :lungselection do
 
   datasets.each do |row|
     raw = row[:filenames]
+    reconstructed = reconstructed_from_raw raw
     csv_output = csv_from_raw raw
-    desc "shape selection of #{csv_output}"
-    file csv_output => ["lung_selection.py", reconstructed_from_raw(raw)] do |f|
+    npy_output = File.join(
+      File.dirname(csv_output),
+      File.basename(csv_output, ".csv") + ".npy"
+    )
+
+    desc "export selection to #{csv_output}"
+    file csv_output => ["lung_data.py", reconstructed, npy_output] do |f|
+      sh "python #{f.prerequisites[0]} #{f.prerequisites[1]} #{f.prerequisites[2]} #{f.name}"
+    end
+
+    desc "shape selection to #{npy_output}"
+    file npy_output => ["lung_selection.py", reconstructed_from_raw(raw)] do |f|
       sh "python #{f.prerequisites[0]} #{f.prerequisites[1]} #{f.name}"
     end
   end
@@ -81,3 +92,5 @@ namespace :analysis do
   end
 
 end
+
+task :default => ["plots/ratio.png"]
