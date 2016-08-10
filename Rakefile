@@ -76,8 +76,8 @@ namespace :analysis do
   end
 
   desc "single dataset plots"
-  file "plots/single_datasets.png" => "data/pixels.rds" do |f|
-    sh "./single_dataset_histogram.R -f #{f.source} -o #{f.name}"
+  file "plots/ratio.png" => ["single_dataset_histogram.R", "data/pixels.rds"] do |f|
+    sh "./#{f.prerequisites[0]} -f #{f.prerequisites[1]} -o #{f.name}"
   end
 
 end
